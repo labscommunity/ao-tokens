@@ -99,4 +99,26 @@ export default class Quantity {
 
     return formatted;
   }
+
+  /**
+   * Create a new instance with the same quantity, but a
+   * different denomination. This will cause precision
+   * loss if the new denomination is smaller than the
+   * original
+   * @param newDenomination Denomination to convert to
+   * @returns New instance
+   */
+  convert(newDenomination: bigint): Quantity {
+    const denominationDiff = newDenomination - this.#D;
+
+    // downscale
+    let newQty = this.#qty / 10n ** denominationDiff;
+
+    // upscale
+    if (newDenomination >= this.#D) {
+      newQty = this.#qty * 10n ** denominationDiff;
+    }
+
+    return new Quantity(newQty, newDenomination);
+  }
 }

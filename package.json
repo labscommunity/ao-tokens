@@ -1,0 +1,36 @@
+{
+  "name": "ao-tokens",
+  "version": "0.0.1",
+  "repository": "https://github.com/martonlederer/ao-tokens",
+  "author": "Marton Lederer <marton@lederer.hu>",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs.js",
+      "import": "./dist/index.es.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@permaweb/aoconnect": "^0.0.51",
+    "@types/node": "^20.12.6",
+    "typescript": "^5.4.4",
+    "vite": "^5.1.4",
+    "vite-plugin-dts": "^3.8.1"
+  }
+}

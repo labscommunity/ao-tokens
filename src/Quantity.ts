@@ -198,6 +198,33 @@ export default class Quantity {
   }
 
   /**
+   * Clone Quantity instance
+   */
+  clone() {
+    return new Quantity(
+      this.#qty,
+      this.#D
+    );
+  }
+
+  /**
+   * Shortcut/set to to one (in-place)
+   */
+  _one() {
+    this.#qty = 10n ** this.#D;
+  }
+
+  /**
+   * Shortcut/set to one
+   */
+  static __one(denomination: bigint = 0n) {
+    return new Quantity(
+      10n ** denomination,
+      denomination
+    );
+  }
+
+  /**
    * Convert the quantity (in-place) to use a different
    * denomination
    * @param newDenomination Denomination to convert to
@@ -388,6 +415,48 @@ export default class Quantity {
   _div(y: Quantity) {
     const res = Quantity.__convert(
       Quantity.__div(this, y),
+      this.#D
+    );
+    this.#qty = res.#qty;
+  }
+
+  /**
+   * Raise one quantity to the power of an integer. This can cause precision loss
+   * @param x Quantity to raise
+   * @param y Exponent
+   * @returns Result of the power operation
+   */
+  static __pow(x: Quantity, y: number) {
+    if (!Number.isInteger(y)) {
+      throw new Error("Cannot raise Quantity to the power of a non-integer number");
+    }
+    if (y === 0) return new Quantity(0, x.#D);
+
+    let res = x.clone();
+
+    for (let i = 0; i < Math.abs(y) - 1; i++) {
+      res._mul(x);
+    }
+
+    // negative exponent
+    if (y < 0) {
+      res = Quantity.__div(
+        Quantity.__one(res.#D),
+        res
+      );
+    }
+
+    return res;
+  }
+
+  /**
+   * Raise one quantity to the power of an integer (in-place). This can cause
+   * precision loss
+   * @param y Exponent
+   */
+  _pow(y: number) {
+    const res = Quantity.__convert(
+      Quantity.__pow(this, y),
       this.#D
     );
     this.#qty = res.#qty;

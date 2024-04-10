@@ -84,6 +84,17 @@ describe("Quantity testing", () => {
     expect(inst.toNumber()).toEqual(v);
   });
 
+  test("Clone a quantity", () => {
+    const inst = new Quantity(2345n, 3n);
+    const clone = inst.clone();
+
+    clone._mul(new Quantity(20n, 1n));
+    clone._convert(4n);
+
+    expect(clone.raw).not.toEqual(inst.raw);
+    expect(clone.denomination).not.toEqual(inst.denomination);
+  });
+
   test("Convert to a quantity with a different denomination", () => {
     const baseQty = 15529585725794n;
     const inst = new Quantity(baseQty, 10n);
@@ -232,5 +243,31 @@ describe("Quantity testing", () => {
     inst1._div(inst2);
 
     expect(inst1.toString()).toEqual("182.4");
+  });
+
+  test("Static power (positive)", () => {
+    const d1 = 8n;
+    const inst1 = new Quantity(BigInt(4.5 * 10 ** Number(d1)), d1);
+
+    const res = Quantity.__pow(inst1, 2);
+
+    expect(res.toString()).toEqual("20.25");
+  });
+
+  test("Static power (negative)", () => {
+    const d1 = 4n;
+    const inst1 = new Quantity(5n * 10n ** d1, d1);
+
+    const res = Quantity.__pow(inst1, -3);
+
+    expect(res.toString()).toEqual("0.008");
+  });
+
+  test("In-place power", () => {
+    const inst1 = new Quantity(250n, 2n);
+
+    inst1._pow(2);
+
+    expect(inst1.toString()).toEqual("6.25");
   });
 });

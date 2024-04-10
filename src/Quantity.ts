@@ -170,6 +170,17 @@ export default class Quantity {
   }
 
   /**
+   * Format a quantity as a JavaScript floating point number.
+   * This while cause precision loss
+   */
+  toNumber() {
+    // minimize precision loss by first creating a string
+    const str = this.toString();
+
+    return parseFloat(str);
+  }
+
+  /**
    * Create a new instance with the same quantity, but a
    * different denomination. This will cause precision
    * loss if the new denomination is smaller than the

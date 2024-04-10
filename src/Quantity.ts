@@ -19,7 +19,42 @@ export default class Quantity {
   }
 
   /**
+   * Raw base quantity
+   */
+  get raw() {
+    return this.#qty;
+  }
+
+  /**
+   * Integer/whole part
+   */
+  get integer() {
+    const qtyStr = this.#qty.toString();
+    return BigInt(
+      qtyStr.slice(0, qtyStr.length - Number(this.#D))
+    );
+  }
+
+  /**
+   * Fractional part in integers
+   */
+  get fractional() {
+    const qtyStr = this.#qty.toString();
+    return BigInt(
+      qtyStr.slice(qtyStr.length - Number(this.#D), qtyStr.length)
+    );
+  }
+
+  /**
+   * Denomination
+   */
+  get denomination() {
+    return this.#D;
+  }
+
+  /**
    * Load a quantity from a string while keeping precision
+   * until the denomination is reached
    * @param value String to load as a quantity
    */
   fromString(value: string) {
@@ -27,9 +62,6 @@ export default class Quantity {
       this.#qty = 0n;
       return;
     }
-
-    // multiplier according to the denomination
-    const dMul = 10n ** this.#D;
 
     // replace formatters
     value = value.replace(/,/g, "");
@@ -40,6 +72,10 @@ export default class Quantity {
       return;
     }
 
+    // multiplier according to the denomination
+    const dMul = 10n ** this.#D;
+
+    // calculate result
     let result = BigInt(value.split(".")[0]) * dMul;
     const plainFractions = value.split(".")[1];
 
@@ -59,6 +95,15 @@ export default class Quantity {
 
     // set result
     this.#qty = result;
+  }
+
+  /**
+   * Load a quantity from a number while keeping precision
+   * until the denomination is reached
+   * @param value Number to load as a quantity
+   */
+  fromNumber(value: number) {
+    return this.fromString(value.toString());
   }
 
   /**
@@ -120,5 +165,47 @@ export default class Quantity {
     }
 
     return new Quantity(newQty, newDenomination);
+  }
+
+  /**
+   * Operators
+   */
+
+  /**
+   * Bring two quantities to the same denomination
+   * (will always bring to the larger one)
+   * @param ... Quantities
+   * @returns The quantitieson the same denomination
+   */
+  static sameDenomination(...quantities: Quantity[]) {
+    if (quantities.length < 1) return quantities;
+
+    // find the largest denomination
+    const largestDenomination = quantities.reduce(
+      (prev, curr) => prev.#D > curr.#D ? prev : curr
+    ).#D;
+
+    // adjust quantities
+    for (let i = 0; i < quantities.length; i++) {
+      if (quantities[i].#D === largestDenomination) continue;
+      const diff = largestDenomination - quantities[i].#D;
+
+      quantities[i].#qty = quantities[i].#qty * 10n ** diff;
+      quantities[i].#D = largestDenomination;
+    }
+
+    return quantities;
+  }
+
+  /**
+   * Check if quantities are equal
+   * @param x First quantity
+   * @param y Second quantity
+   */
+  static eq(x: Quantity, y: Quantity) {
+    // ensure that the two qtys have the same denomination
+    [x, y] = this.sameDenomination(x, y);
+
+    return x.#qty === y.#qty;
   }
 }

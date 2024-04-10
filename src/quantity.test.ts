@@ -181,4 +181,30 @@ describe("Quantity testing", () => {
 
     expect(inst1.toString()).toEqual("72.62");
   });
+
+  test("Static multiplication", () => {
+    const val1 = 1.25;
+    const val2 = 0.5;
+    const d1 = 4n;
+    const d2 = 3n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    const res = Quantity.__mul(inst1, inst2);
+
+    expect(res.toString()).toEqual("0.625");
+  });
+
+  test("In-place multiplication", () => {
+    const val1 = 456;
+    const val2 = 2.5;
+    const d1 = 12n;
+    const d2 = 9n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    inst1._mul(inst2);
+
+    expect(inst1.toString()).toBe("1140");
+  });
 });

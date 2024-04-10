@@ -335,5 +335,32 @@ export default class Quantity {
     this.#qty = res.#qty;
   }
 
-  
+  /**
+   * Multiply one quantity by another
+   * @param x First quantity
+   * @param y Second quantity
+   * @returns Result of the multiplication (with the larger denomination)
+   */
+  static __mul(x: Quantity, y: Quantity) {
+    // ensure that the two qtys have the same denomination
+    [x, y] = this.sameDenomination(x, y);
+
+    return new Quantity(
+      x.#qty * y.#qty / 10n ** x.#D,
+      x.#D
+    );
+  }
+
+  /**
+   * Multiply one quantity by another (in-place). This might cause
+   * precision loss if y has a larger denomination
+   * @param y Quantity to multiply by
+   */
+  _mul(y: Quantity) {
+    const res = Quantity.__convert(
+      Quantity.__mul(this, y),
+      this.#D
+    );
+    this.#qty = res.#qty;
+  }
 }

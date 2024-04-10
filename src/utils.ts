@@ -1,5 +1,6 @@
 import { type Tag } from "arweave/web/lib/transaction";
 import { type connect } from "@permaweb/aoconnect";
+import Quantity from "./Quantity"
 
 /**
  * Dummy ID
@@ -42,4 +43,11 @@ export interface Message {
   Tags: Tag[];
   Target: string;
   Data: string;
+}
+
+/**
+ * Balances interface
+ */
+export interface Balances {
+  [address: string]: Quantity;
 }

@@ -1,5 +1,5 @@
 
-import { AoInstance, TokenInfo, Id, Owner, getTagValue, Message } from "./utils";
+import { AoInstance, TokenInfo, Id, Owner, getTagValue, Message, Balances } from "./utils";
 import { connect } from "@permaweb/aoconnect";
 import Quantity from "./Quantity";
 
@@ -100,5 +100,41 @@ export class TokenInstance {
   
     // default return
     return new Quantity(0, this.#info.Denomination);
+  }
+
+  /**
+   * Get all balances
+   * @returns Token balances
+   */
+  async getBalances(): Promise<Balances> {
+    // query ao
+    const res = await this.#ao.dryrun({
+      Id,
+      Owner,
+      process: this.#id,
+      tags: [{ name: "Action", value: "Balances" }]
+    });
+    const bals: Balances = {};
+      
+    // find result message
+    for (const msg of res.Messages as Message[]) {
+      const target = getTagValue("Balance", msg.Tags);
+      
+      // return balance if found
+      if (target !== Owner|| !msg.Data) continue;
+      
+      try {
+        const raw = JSON.parse(msg.Data);
+
+        for (const addr in raw) {
+          bals[addr] = new Quantity(
+            raw[addr],
+            this.#info.Denomination
+          );
+        }
+      } catch {}
+    }
+
+    return bals;
   }
 }

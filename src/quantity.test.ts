@@ -99,4 +99,60 @@ describe("Quantity testing", () => {
 
     expect(inst.raw).toEqual(baseQty * 10n ** 2n)
   });
+
+  test("Bringing two quantities to the same denomination", () => {
+    const val1 = 425256n;
+    const val2 = 495858998n;
+    let inst1 = new Quantity(val1, 4n);
+    let inst2 = new Quantity(val2, 6n);
+
+    [inst1, inst2] = Quantity.sameDenomination(inst1, inst2);
+
+    expect(inst1.raw).toEqual(val1 * 10n ** 2n);
+    expect(inst2.raw).toEqual(val2);
+  });
+
+  test("Equals operator for the same denomination", () => {
+    expect(
+      Quantity.eq(new Quantity(2n, 12n), new Quantity(2n, 12n))
+    ).toBeTruthy();
+    expect(
+      Quantity.eq(new Quantity(2n, 12n), new Quantity(3n, 12n))
+    ).toBeFalsy();
+  });
+
+  test("Equals operator for a different denomination", () => {
+    expect(Quantity.eq(
+      new Quantity(200n, 12n), new Quantity(2n, 10n)
+    )).toBeTruthy();
+    expect(Quantity.eq(
+      new Quantity(200n, 12n), new Quantity(200n, 10n)
+    )).toBeFalsy();
+  });
+
+  test("Static add operator", () => {
+    const val1 = 23.84;
+    const val2 = 556.2345;
+    const d1 = 2n;
+    const d2 = 4n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    const res = Quantity.__add(inst1, inst2);
+
+    expect(res.toString()).toEqual("580.0745");
+  });
+
+  test("In-place add operator", () => {
+    const val1 = 44.56;
+    const val2 = 29.731;
+    const d1 = 2n;
+    const d2 = 3n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    inst1._add(inst2);
+
+    expect(inst1.toString()).toEqual("74.29")
+  });
 });

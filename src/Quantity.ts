@@ -205,11 +205,13 @@ export default class Quantity {
     const denominationDiff = newDenomination - quantity.#D;
 
     // downscale
-    let newQty = quantity.#qty / 10n ** denominationDiff;
+    let newQty = 0n;
 
     // upscale
     if (newDenomination >= quantity.#D) {
       newQty = quantity.#qty * 10n ** denominationDiff;
+    } else {
+      quantity.#qty / 10n ** -denominationDiff;
     }
 
     return new Quantity(newQty, newDenomination);
@@ -236,10 +238,11 @@ export default class Quantity {
     // adjust quantities
     for (let i = 0; i < quantities.length; i++) {
       if (quantities[i].#D === largestDenomination) continue;
-      const diff = largestDenomination - quantities[i].#D;
 
-      quantities[i].#qty = quantities[i].#qty * 10n ** diff;
-      quantities[i].#D = largestDenomination;
+      quantities[i] = Quantity.__convert(
+        quantities[i],
+        largestDenomination
+      );
     }
 
     return quantities;

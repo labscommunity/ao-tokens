@@ -207,4 +207,30 @@ describe("Quantity testing", () => {
 
     expect(inst1.toString()).toBe("1140");
   });
+
+  test("Static division", () => {
+    const val1 = 456.82;
+    const val2 = 2.2;
+    const d1 = 11n;
+    const d2 = 12n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    const res = Quantity.__div(inst1, inst2);
+
+    expect(res.toString()).toEqual("207.645454545454");
+  });
+
+  test("In-place division", () => {
+    const val1 = 456;
+    const val2 = 2.5;
+    const d1 = 4n;
+    const d2 = 5n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    inst1._div(inst2);
+
+    expect(inst1.toString()).toEqual("182.4");
+  });
 });

@@ -363,4 +363,33 @@ export default class Quantity {
     );
     this.#qty = res.#qty;
   }
+
+  /**
+   * Divide one quantity by another (can cause precision loss)
+   * @param x Quantity to divide
+   * @param y Quantity to divide with
+   * @returns Result of the addition (with the larger denomination)
+   */
+  static __div(x: Quantity, y: Quantity) {
+    // ensure that the two qtys have the same denomination
+    [x, y] = this.sameDenomination(x, y);
+
+    return new Quantity(
+      x.#qty * 10n ** x.#D / y.#qty,
+      x.#D
+    );
+  }
+
+  /**
+   * Divide one quantity by another (in-place). This might cause
+   * precision loss if y has a larger denomination
+   * @param y Quantity to divide with
+   */
+  _div(y: Quantity) {
+    const res = Quantity.__convert(
+      Quantity.__div(this, y),
+      this.#D
+    );
+    this.#qty = res.#qty;
+  }
 }

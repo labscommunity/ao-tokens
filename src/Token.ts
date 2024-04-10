@@ -1,9 +1,9 @@
 
-import { AoInstance, TokenInfo, Id, Owner, getTagValue, Message, Balances } from "./utils";
-import { connect } from "@permaweb/aoconnect";
+import { AoInstance, TokenInfo, Id, Owner, getTagValue, Message, Balances, isAddress } from "./utils";
+import { connect, type createDataItemSigner } from "@permaweb/aoconnect";
 import Quantity from "./Quantity";
 
-export default async function Token(id: string, ao = connect()) {
+export default async function Token(id: string, signer: ReturnType<typeof createDataItemSigner>, ao = connect()) {
   // query ao
   const res = await ao.dryrun({
     Id,
@@ -30,6 +30,7 @@ export default async function Token(id: string, ao = connect()) {
         Denomination: BigInt(Denomination || 0),
         Logo
       },
+      signer,
       ao
     );
   }
@@ -47,14 +48,18 @@ export class TokenInstance {
   // ao instance
   #ao: AoInstance;
 
+  // signer instance
+  #signer: ReturnType<typeof createDataItemSigner>;
+
   /**
    * @param id Token process ID
    * @param info Optional loaded token info
    */
-  constructor(id: string, info: TokenInfo, ao: AoInstance) {
+  constructor(id: string, info: TokenInfo, signer: ReturnType<typeof createDataItemSigner>, ao: AoInstance) {
     this.#id = id;
     this.#info = info;
     this.#ao = ao;
+    this.#signer = signer;
   }
 
   /**
@@ -136,5 +141,33 @@ export class TokenInstance {
     }
 
     return bals;
+  }
+
+  /**
+   * Transfer tokens to another address
+   * @param quantity Amount to transfer
+   * @param recipient Transfer recipient
+   * @returns Transfer message ID
+   */
+  async transfer(quantity: Quantity, recipient: string) {
+    // check address
+    if (!isAddress(recipient)) {
+      throw new Error("Invalid recipient address");
+    }
+
+    // check quantity
+    if (!Quantity.isQuantityOf(quantity, this)) {
+      throw new Error("Invalid quantity for this token");
+    }
+
+    return await this.#ao.message({
+      process: this.#id,
+      signer: this.#signer,
+      tags: [
+        { name: "Action", value: "Transfer" },
+        { name: "Recipient", value: recipient },
+        { name: "Quantity", value: quantity.raw.toString() }
+      ]
+    });
   }
 }

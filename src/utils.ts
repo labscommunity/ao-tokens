@@ -51,3 +51,12 @@ export interface Message {
 export interface Balances {
   [address: string]: Quantity;
 }
+
+/**
+ * Get if a value is an address
+ * @param val Value to check
+ */
+export function isAddress(val: unknown) {
+  if (typeof val !== "string") return false;
+  return /[a-z0-9_-]{43}/i.test(val);
+}

@@ -1,4 +1,4 @@
-import Token from "./Token";
+import { type TokenInstance } from "./Token";
 
 export default class Quantity {
   // base quantity
@@ -94,7 +94,7 @@ export default class Quantity {
    * @param token Token process instance
    * @returns Valid or not
    */
-  static isQuantityOf(val: Quantity, token: Token) {
+  static isQuantityOf(val: Quantity, token: TokenInstance) {
     if (Quantity.isQuantity(val)) return false;
     return token.info?.Denomination === (val as Quantity).#D;
   }

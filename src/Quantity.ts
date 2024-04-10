@@ -10,12 +10,29 @@ export default class Quantity {
    * @param base Quantity in integer/non-denominated format or string
    * @param denomination Denomination that belongs to the token
    */
-  constructor(base?: bigint | string, denomination = 0n) {
+  constructor(base?: bigint | string | number, denomination = 0n) {
     this.#D = denomination;
     this.#qty = 0n;
 
-    if (typeof base === "bigint") this.#qty = base;
-    else if (typeof base === "string") this.fromString(base);
+    // init
+    switch (typeof base) {
+      case "bigint":
+        this.#qty = base;
+        break;
+      case "string":
+        this.fromString(base);
+        break;
+      case "number":
+        if (!Number.isInteger(base)) {
+          throw new Error("Cannot create Quantity from a non-integer number");
+        }
+        this.#qty = BigInt(base);
+        break;
+      case "undefined":
+        break;
+      default:
+        throw new Error("Could not create Quantity from " + typeof base);
+    }
   }
 
   /**
@@ -282,7 +299,39 @@ export default class Quantity {
    * @param y Second quantity
    */
   _add(y: Quantity) {
-    const res = Quantity.__convert(Quantity.__add(this, y), this.#D);
+    const res = Quantity.__convert(
+      Quantity.__add(this, y),
+      this.#D
+    );
+    this.#qty = res.#qty;
+  }
+
+  /**
+   * Subtract one quantity from another
+   * @param x Quantity to subtract from
+   * @param y Quantity to subtract
+   * @returns Result of the addition (with the larger denomination)
+   */
+  static __sub(x: Quantity, y: Quantity) {
+    // ensure that the two qtys have the same denomination
+    [x, y] = this.sameDenomination(x, y);
+
+    return new Quantity(
+      x.#qty - y.#qty,
+      x.#D
+    );
+  }
+
+  /**
+   * Subtract one quantity from another (in-place). This might cause
+   * precision loss if y has a larger denomination
+   * @param y Quantity to subtract
+   */
+  _sub(y: Quantity) {
+    const res = Quantity.__convert(
+      Quantity.__sub(this, y),
+      this.#D
+    );
     this.#qty = res.#qty;
   }
 }

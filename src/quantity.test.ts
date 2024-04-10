@@ -153,6 +153,32 @@ describe("Quantity testing", () => {
 
     inst1._add(inst2);
 
-    expect(inst1.toString()).toEqual("74.29")
+    expect(inst1.toString()).toEqual("74.29");
+  });
+
+  test("Static subtract", () => {
+    const val1 = 22.5;
+    const val2 = 8.25;
+    const d1 = 12n;
+    const d2 = 3n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    const res = Quantity.__sub(inst1, inst2);
+
+    expect(res.toString()).toEqual("14.25");
+  });
+
+  test("In-place subtract operator", () => {
+    const val1 = 95.75;
+    const val2 = 23.13;
+    const d1 = 6n;
+    const d2 = 3n;
+    const inst1 = new Quantity(BigInt(val1 * 10 ** Number(d1)), d1);
+    const inst2 = new Quantity(BigInt(val2 * 10 ** Number(d2)), d2);
+
+    inst1._sub(inst2);
+
+    expect(inst1.toString()).toEqual("72.62");
   });
 });

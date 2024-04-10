@@ -201,17 +201,17 @@ export default class Quantity {
    * @param newDenomination Denomination to convert to
    * @returns New instance
    */
-  static __convert(quantity: Quantity, newDenomination: bigint): Quantity {
-    const denominationDiff = newDenomination - quantity.#D;
+  static __convert(instance: Quantity, newDenomination: bigint): Quantity {
+    const denominationDiff = newDenomination - instance.#D;
 
     // downscale
     let newQty = 0n;
 
     // upscale
-    if (newDenomination >= quantity.#D) {
-      newQty = quantity.#qty * 10n ** denominationDiff;
+    if (newDenomination >= instance.#D) {
+      newQty = instance.#qty * 10n ** denominationDiff;
     } else {
-      quantity.#qty / 10n ** -denominationDiff;
+      newQty = instance.#qty / 10n ** -denominationDiff;
     }
 
     return new Quantity(newQty, newDenomination);

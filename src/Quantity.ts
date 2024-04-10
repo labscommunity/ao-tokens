@@ -1,3 +1,5 @@
+import Token from "./Token";
+
 export default class Quantity {
   // base quantity
   #qty: bigint;
@@ -85,17 +87,17 @@ export default class Quantity {
     return typeof val === "object" && val instanceof Quantity;
   }
   
-  // TODO:
   /**
    * Check if a value is a quantity of a token process
+   * (this only works if the token info has been loaded)
    * @param val Value to check
    * @param token Token process instance
    * @returns Valid or not
    */
-  /*static isQuantityOf(val: Quantity, token: Token) {
+  static isQuantityOf(val: Quantity, token: Token) {
     if (Quantity.isQuantity(val)) return false;
-    return
-  }*/
+    return token.info?.Denomination === (val as Quantity).#D;
+  }
 
   /**
    * Load a quantity from a string while keeping precision

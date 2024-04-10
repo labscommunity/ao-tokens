@@ -1,9 +1,14 @@
 
 import { AoInstance, TokenInfo, Id, Owner, getTagValue, Message, Balances, isAddress } from "./utils";
-import { connect, type createDataItemSigner } from "@permaweb/aoconnect";
+import { connect, createDataItemSigner } from "@permaweb/aoconnect";
 import Quantity from "./Quantity";
 
-export default async function Token(id: string, signer: ReturnType<typeof createDataItemSigner>, ao = connect()) {
+export default async function Token(
+  id: string,
+  // @ts-expect-error
+  signer = createDataItemSigner(window.arweaveWallet),
+  ao = connect()
+) {
   // query ao
   const res = await ao.dryrun({
     Id,

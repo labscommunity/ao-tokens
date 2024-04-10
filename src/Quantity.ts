@@ -181,22 +181,35 @@ export default class Quantity {
   }
 
   /**
+   * Convert the quantity (in-place) to use a different
+   * denomination
+   * @param newDenomination Denomination to convert to
+   */
+  _convert(newDenomination: bigint) {
+    const newInst = Quantity.__convert(this, newDenomination);
+
+    this.#D = newDenomination;
+    this.#qty = newInst.#qty;
+  }
+
+  /**
    * Create a new instance with the same quantity, but a
    * different denomination. This will cause precision
    * loss if the new denomination is smaller than the
    * original
+   * @param quantity Quantity to convert
    * @param newDenomination Denomination to convert to
    * @returns New instance
    */
-  convert(newDenomination: bigint): Quantity {
-    const denominationDiff = newDenomination - this.#D;
+  static __convert(quantity: Quantity, newDenomination: bigint): Quantity {
+    const denominationDiff = newDenomination - quantity.#D;
 
     // downscale
-    let newQty = this.#qty / 10n ** denominationDiff;
+    let newQty = quantity.#qty / 10n ** denominationDiff;
 
     // upscale
-    if (newDenomination >= this.#D) {
-      newQty = this.#qty * 10n ** denominationDiff;
+    if (newDenomination >= quantity.#D) {
+      newQty = quantity.#qty * 10n ** denominationDiff;
     }
 
     return new Quantity(newQty, newDenomination);
@@ -266,7 +279,7 @@ export default class Quantity {
    * @param y Second quantity
    */
   _add(y: Quantity) {
-    const res = Quantity.__add(this, y).convert(this.#D);
+    const res = Quantity.__convert(Quantity.__add(this, y), this.#D);
     this.#qty = res.#qty;
   }
 }

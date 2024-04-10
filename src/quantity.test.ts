@@ -83,4 +83,20 @@ describe("Quantity testing", () => {
 
     expect(inst.toNumber()).toEqual(v);
   });
+
+  test("Convert to a quantity with a different denomination", () => {
+    const baseQty = 15529585725794n;
+    const inst = new Quantity(baseQty, 10n);
+
+    expect(Quantity.__convert(inst, 12n).raw).toEqual(baseQty * 10n ** 2n);
+  });
+
+  test("Convert to a quantity with a different denomination (in-place)", () => {
+    const baseQty = 873576n;
+    const inst = new Quantity(baseQty, 5n);
+
+    inst._convert(7n);
+
+    expect(inst.raw).toEqual(baseQty * 10n ** 2n)
+  });
 });

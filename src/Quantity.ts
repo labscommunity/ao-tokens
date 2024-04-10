@@ -28,6 +28,10 @@ export default class Quantity {
         }
         this.#qty = BigInt(base);
         break;
+      case "object":
+        if ((base as object) instanceof Quantity) {
+          this.#qty = base.
+        }
       case "undefined":
         break;
       default:
@@ -68,6 +72,27 @@ export default class Quantity {
   get denomination() {
     return this.#D;
   }
+
+  /**
+   * Check if a value is a valid quantity
+   * @param val Value to check
+   * @returns Valid or not
+   */
+  static isQuantity(val: unknown): val is Quantity {
+    return typeof val === "object" && val instanceof Quantity;
+  }
+  
+  // TODO:
+  /**
+   * Check if a value is a quantity of a token process
+   * @param val Value to check
+   * @param token Token process instance
+   * @returns Valid or not
+   */
+  /*static isQuantityOf(val: Quantity, token: Token) {
+    if (Quantity.isQuantity(val)) return false;
+    return
+  }*/
 
   /**
    * Load a quantity from a string while keeping precision

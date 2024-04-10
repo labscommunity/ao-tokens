@@ -29,9 +29,12 @@ export default class Quantity {
         this.#qty = BigInt(base);
         break;
       case "object":
-        if ((base as object) instanceof Quantity) {
-          this.#qty = base.
+        if (Quantity.isQuantity(base)) {
+          this.#qty = (base as Quantity).#qty;
+          this.#D = (base as Quantity).#D;
+          break;
         }
+        throw new Error("Could not convert object to quantity");
       case "undefined":
         break;
       default:

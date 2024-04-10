@@ -113,8 +113,12 @@ export default class Quantity {
    * @param options Optinal formatting for the number
    * @returns Formatted string
    */
-  toString(options: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }) {
+  toLocaleString(locales?: Intl.LocalesArgument, options: BigIntToLocaleStringOptions = {}) {
     if (!this.#qty) return "0";
+    if (!options.maximumFractionDigits) {
+      // @ts-expect-error
+      options.maximumFractionDigits = Number(this.#D) > 20 ? 20 : Number(this.#D);
+    }
 
     // multiplier according to the denomination
     const dMul = 10n ** this.#D;
@@ -123,7 +127,10 @@ export default class Quantity {
     const integerPart = this.#qty / dMul;
 
     // return value
-    let formatted = integerPart.toLocaleString();
+    let formatted = integerPart.toLocaleString(
+      locales,
+      { ...options, maximumFractionDigits: 0, minimumFractionDigits: 0 }
+    );
 
     // add fractions
     if (options.maximumFractionDigits !== 0) {
@@ -137,12 +144,29 @@ export default class Quantity {
         .padStart(Number(this.#D), "0")
         .slice(0, options.maximumFractionDigits);
 
+      // add more fractions if required
+      if ((options.minimumFractionDigits || 0) > fractions.length) {
+        fractions += "0".repeat((options.minimumFractionDigits || 0) - fractions.length);
+      }
+
       if (fractions !== "" && BigInt(fractions) > 0n) {
         formatted += "." + fractions.replace(/0*$/, "");
       }
     }
 
     return formatted;
+  }
+
+  /**
+   * Format a quantity as a floating point number string,
+   * while keeping precision (using the provided 
+   * denomination)
+   */
+  toString() {
+    return this.toLocaleString(
+      undefined,
+      { useGrouping: false }
+    );
   }
 
   /**
@@ -207,5 +231,31 @@ export default class Quantity {
     [x, y] = this.sameDenomination(x, y);
 
     return x.#qty === y.#qty;
+  }
+
+  /**
+   * Add together two quantities
+   * @param x First quantity
+   * @param y Second quantity
+   * @returns Result of the addition (with the larger denomination)
+   */
+  static __add(x: Quantity, y: Quantity) {
+    // ensure that the two qtys have the same denomination
+    [x, y] = this.sameDenomination(x, y);
+
+    return new Quantity(
+      x.#qty + y.#qty,
+      x.#D
+    );
+  }
+
+  /**
+   * Add together two quantities (in-place). This might cause
+   * precision loss if y has a larger denomination
+   * @param y Second quantity
+   */
+  _add(y: Quantity) {
+    const res = Quantity.__add(this, y).convert(this.#D);
+    this.#qty = res.#qty;
   }
 }

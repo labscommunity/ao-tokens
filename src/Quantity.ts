@@ -559,8 +559,28 @@ export default class Quantity {
     );
   }
 
-  static __floor(x: Quantity) {
+  /**
+   * Truncate a quantity
+   * @param x Quantity to truncate
+   * @returns Whole number (truncated)
+   */
+  static __trunc(x: Quantity) {
+    return new Quantity(
+      x.#qty - x.#qty % 10n ** x.#D,
+      x.#D
+    );
+  }
 
+  /**
+   * Truncate a quantity (in-place)
+   */
+  _trunc() {
+    const res = Quantity.__trunc(this);
+    this.#qty = res.#qty;
+  }
+
+  static __floor(x: Quantity) {
+    
   }
 
   _floor() {

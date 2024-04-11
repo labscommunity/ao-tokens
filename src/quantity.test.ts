@@ -319,4 +319,38 @@ describe("Quantity testing", () => {
     expect(Quantity.isQuantityOf(validQty, tkn)).toBeTruthy();
     expect(Quantity.isQuantityOf(invalidQty, tkn)).toBeFalsy();
   });
+
+  test("Quantity min()", () => {
+    const min = new Quantity(1n, 10n);
+    const list = [new Quantity(456n, 2n), min, new Quantity(1n, 5n)];
+    const res = Quantity.min(...list);
+
+    expect(res).not.toBeUndefined();
+    expect(Quantity.eq(res as Quantity, min)).toBeTruthy();
+  });
+
+  test("Quantity max()", () => {
+    const max = new Quantity(500n, 1n);
+    const list = [new Quantity(456n, 2n), max, new Quantity(1n, 5n)];
+    const res = Quantity.max(...list);
+
+    expect(res).not.toBeUndefined();
+    expect(Quantity.eq(res as Quantity, max)).toBeTruthy();
+  });
+
+  test("Static trunc", () => {
+    const whole = 5400n;
+    const inst = new Quantity(whole + 11n, 2n);
+
+    expect(Quantity.__trunc(inst).raw).toEqual(whole);
+  });
+
+  test("In-place trunc", () => {
+    const whole = 89340000n;
+    const inst = new Quantity(whole + 385n, 4n);
+
+    inst._trunc();
+
+    expect(inst.raw).toEqual(whole);
+  });
 });

@@ -156,6 +156,28 @@ describe("Quantity testing", () => {
     )).toBeFalsy();
   });
 
+  test("Less than operator for the same denomination", () => {
+    expect(Quantity.lt(new Quantity(10n, 3n), new Quantity(20n, 3n))).toBeTruthy();
+    expect(Quantity.lt(new Quantity(5n, 3n), new Quantity(5n, 3n))).toBeFalsy();
+  });
+
+  test("Less than operator for a different denomination", () => {
+    expect(Quantity.lt(new Quantity(222n, 3n), new Quantity(50n, 2n))).toBeTruthy();
+    expect(Quantity.lt(new Quantity(500n, 2n), new Quantity(500n, 5n))).toBeFalsy();
+  });
+
+  test("Less or equal than operator for the same denomination", () => {
+    expect(Quantity.le(new Quantity(10n, 3n), new Quantity(20n, 3n))).toBeTruthy();
+    expect(Quantity.le(new Quantity(5n, 3n), new Quantity(5n, 3n))).toBeTruthy();
+    expect(Quantity.le(new Quantity(5n, 3n), new Quantity(2n, 3n))).toBeFalsy();
+  });
+
+  test("Less or equal than operator for a different denomination", () => {
+    expect(Quantity.le(new Quantity(100n, 3n), new Quantity(20n, 2n))).toBeTruthy();
+    expect(Quantity.le(new Quantity(500n, 5n), new Quantity(5n, 3n))).toBeTruthy();
+    expect(Quantity.le(new Quantity(51n, 2n), new Quantity(2n, 3n))).toBeFalsy();
+  });
+
   test("Static add operator", () => {
     const val1 = 23.84;
     const val2 = 556.2345;

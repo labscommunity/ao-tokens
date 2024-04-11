@@ -326,12 +326,37 @@ export default class Quantity {
    * Check if quantities are equal
    * @param x First quantity
    * @param y Second quantity
+   * @returns x == y
    */
   static eq(x: Quantity, y: Quantity) {
     // ensure that the two qtys have the same denomination
     [x, y] = this.sameDenomination(x, y);
 
     return x.#qty === y.#qty;
+  }
+
+  /**
+   * Check if x is less than y
+   * @param x First quantity
+   * @param y Second quantity
+   * @returns x < y
+   */
+  static lt(x: Quantity, y: Quantity) {
+    [x, y] = this.sameDenomination(x, y);
+
+    return x.#qty < y.#qty;
+  }
+
+  /**
+   * Check if x is less or equal than y
+   * @param x First quantity
+   * @param y Second quantity
+   * @returns x <= y
+   */
+  static le(x: Quantity, y: Quantity) {
+    [x, y] = this.sameDenomination(x, y);
+
+    return x.#qty <= y.#qty;
   }
 
   /**
@@ -490,5 +515,79 @@ export default class Quantity {
       this.#D
     );
     this.#qty = res.#qty;
+  }
+
+  /**
+   * Other Math functions
+   */
+
+  /**
+   * Get the minimum of a list of quantities
+   * @param ... Quantities to choose from
+   * @returns Minimum quantity instance of the list
+   */
+  static min(...quantities: Quantity[]) {
+    if (quantities.length === 0) {
+      return undefined;
+    }
+    
+    return quantities.reduce(
+      (prev, curr) => {
+        const [a, b] = this.sameDenomination(prev, curr);
+
+        return this.lt(a, b) ? prev : curr;
+      }
+    );
+  }
+
+  /**
+   * Get the maximum of a list of quantities
+   * @param ... Quantities to choose from
+   * @returns Maximum quantity instance of the list
+   */
+  static max(...quantities: Quantity[]) {
+    if (quantities.length === 0) {
+      return undefined;
+    }
+      
+    return quantities.reduce(
+      (prev, curr) => {
+        const [a, b] = this.sameDenomination(prev, curr);
+  
+        return this.lt(a, b) ? curr : prev;
+      }
+    );
+  }
+
+  static __floor(x: Quantity) {
+
+  }
+
+  _floor() {
+
+  }
+
+  static __ceil(x: Quantity) {
+
+  }
+
+  _ceil() {
+
+  }
+
+  static __neg(x: Quantity) {
+    
+  }
+
+  _neg() {
+
+  }
+
+  static __abs(x: Quantity) {
+
+  }
+
+  _abs() {
+
   }
 }

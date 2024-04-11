@@ -56,20 +56,14 @@ export default class Quantity {
    * Integer/whole part
    */
   get integer() {
-    const qtyStr = this.#qty.toString();
-    return BigInt(
-      qtyStr.slice(0, qtyStr.length - Number(this.#D))
-    );
+    return this.#qty / 10n ** this.#D;
   }
 
   /**
    * Fractional part in integers
    */
   get fractional() {
-    const qtyStr = this.#qty.toString();
-    return BigInt(
-      qtyStr.slice(qtyStr.length - Number(this.#D), qtyStr.length)
-    );
+    return this.#qty - this.integer * 10n ** this.#D;
   }
 
   /**

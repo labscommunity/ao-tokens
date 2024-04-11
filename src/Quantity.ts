@@ -580,35 +580,91 @@ export default class Quantity {
     this.#qty = res.#qty;
   }
 
-  /*static __floor(x: Quantity) {
-    
+  /**
+   * Rounds down
+   * @param x Quantity to round down
+   * @returns Rounded down instance
+   */
+  static __floor(x: Quantity) {
+    let res = Quantity.__trunc(x);
+
+    if (x.#qty < 0n) {
+      res.#qty -= 10n ** x.#D;
+    }
+
+    return res;
   }
 
+  /**
+   * Rounds down (in-place)
+   */
   _floor() {
-
+    const res = Quantity.__floor(this);
+    this.#qty = res.#qty;
   }
 
+  /**
+   * Rounds up
+   * @param x Quantity to round up
+   * @returns Rounded up instance
+   */
   static __ceil(x: Quantity) {
+    let res = Quantity.__trunc(x);
 
+    if (x.#qty > 0n) {
+      res.#qty += 10n ** x.#D;
+    }
+
+    return res;
   }
 
+  /**
+   * Rounds up (in-place)
+   */
   _ceil() {
-
+    const res = Quantity.__ceil(this);
+    this.#qty = res.#qty;
   }
 
+  /**
+   * Negate a quantity
+   * @param x Quantity to negate
+   * @returns Negated instance
+   */
   static __neg(x: Quantity) {
-    
+    return new Quantity(
+      -x.#qty,
+      x.#D
+    );
   }
 
+  /**
+   * Negate a quantity (in-place)
+   */
   _neg() {
-
+    this.#qty = -this.#qty;
   }
 
+  /**
+   * Get the absolute value of a quantity
+   * @param x Quantity to get the absolute value of
+   * @returns Absolute value
+   */
   static __abs(x: Quantity) {
+    let res = x.clone();
 
+    if (x.#qty < 0n) {
+      res.#qty = -res.#qty;
+    }
+
+    return res;
   }
 
+  /**
+   * Get the absolute value of a quantity (in-place)
+   */
   _abs() {
-
-  }*/
+    if (this.#qty >= 0n) return;
+    this.#qty = -this.#qty;
+  }
 }

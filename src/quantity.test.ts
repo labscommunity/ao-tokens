@@ -1,21 +1,6 @@
-import { createDataItemSigner } from "@permaweb/aoconnect";
-import { JWKInterface } from "arweave/node/lib/wallet";
 import Quantity from "./Quantity";
-import Arweave from "arweave";
-import Token from "./Token";
 
 describe("Quantity testing", () => {
-  let wallet: JWKInterface;
-
-  beforeAll(async () => {
-    const arweave = new Arweave({
-      host: "arweave.net",
-      port: 443,
-      protocol: "https"
-    });
-    wallet = await arweave.wallets.generate();
-  });
-
   test("Init quantity", () => {
     const d = 2n;
     const int = 1n;
@@ -308,18 +293,6 @@ describe("Quantity testing", () => {
     expect(inst1.toString()).toEqual("6.25");
   });
 
-  test("Is of token method", async () => {
-    const tkn = await Token(
-      "Sa0iBLPNyJQrwpTTG-tWLQU-1QeUAJA73DdxGGiKoJc",
-      createDataItemSigner(wallet)
-    );
-    const validQty = new Quantity(324n, 3n);
-    const invalidQty = new Quantity(14529n, 5n);
-
-    expect(Quantity.isQuantityOf(validQty, tkn)).toBeTruthy();
-    expect(Quantity.isQuantityOf(invalidQty, tkn)).toBeFalsy();
-  });
-
   test("Quantity min()", () => {
     const min = new Quantity(1n, 10n);
     const list = [new Quantity(456n, 2n), min, new Quantity(1n, 5n)];
@@ -352,5 +325,85 @@ describe("Quantity testing", () => {
     inst._trunc();
 
     expect(inst.raw).toEqual(whole);
+  });
+
+  test("Static floor", () => {
+    const whole = 5400n;
+    const inst1 = new Quantity(whole + 11n, 2n);
+
+    expect(Quantity.__floor(inst1).raw.toString()).toEqual(whole.toString());
+
+    const inst2 = new Quantity(-whole + 11n, 2n);
+
+    expect(Quantity.__floor(inst2).raw.toString()).toEqual((-whole).toString());
+  });
+
+  test("In-place floor", () => {
+    const whole = -89340000n;
+    const inst = new Quantity(whole + 385n, 4n);
+
+    inst._floor();
+
+    expect(inst.raw.toString()).toEqual(whole.toString());
+  });
+
+  test("Static ceil", () => {
+    const whole = 9200n;
+    const inst1 = new Quantity(whole - 11n, 2n);
+
+    expect(Quantity.__ceil(inst1).raw.toString()).toEqual(whole.toString());
+
+    const inst2 = new Quantity(-whole - 11n, 2n);
+
+    expect(Quantity.__ceil(inst2).raw.toString()).toEqual((-whole).toString());
+  });
+
+  test("In-place ceil", () => {
+    const whole = -21570000n;
+    const inst = new Quantity(whole - 385n, 4n);
+
+    inst._ceil();
+
+    expect(inst.raw.toString()).toEqual(whole.toString());
+  });
+
+  test("Static negation", () => {
+    const val = 4568n;
+
+    expect(Quantity.__neg(new Quantity(val, 2n)).raw).toEqual(-val);
+    expect(Quantity.__neg(new Quantity(-val, 2n)).raw).toEqual(val);
+  });
+
+  test("In-place negation", () => {
+    const val = 83754n;
+    const inst = new Quantity(val, 2n);
+
+    inst._neg();
+
+    expect(inst.raw).toEqual(-val);
+
+    inst._neg();
+
+    expect(inst.raw).toEqual(val);
+  });
+
+  test("Static absolute", () => {
+    const val = 4556n;
+
+    expect(Quantity.__abs(new Quantity(-val, 2n)).raw).toEqual(val);
+    expect(Quantity.__abs(new Quantity(val, 2n)).raw).toEqual(val);
+  });
+
+  test("In-place absolute", () => {
+    const val = 89415n;
+    const inst1 = new Quantity(-val, 3n);
+    inst1._abs();
+
+    expect(inst1.raw).toEqual(val);
+
+    const inst2 = new Quantity(val, 5n);
+    inst2._abs();
+
+    expect(inst2.raw).toEqual(val);
   });
 });

@@ -98,11 +98,11 @@ export class TokenInstance {
     // find result message
     for (const msg of res.Messages as Message[]) {
       const balance = getTagValue("Balance", msg.Tags);
-  
+
       // return balance if found
       if (balance) {
         return new Quantity(
-          balance,
+          BigInt(balance),
           this.#info.Denomination
         );
       }
@@ -138,7 +138,7 @@ export class TokenInstance {
 
         for (const addr in raw) {
           bals[addr] = new Quantity(
-            raw[addr],
+            BigInt(raw[addr]),
             this.#info.Denomination
           );
         }

@@ -5,6 +5,7 @@ import Quantity from "./Quantity";
 import Arweave from "arweave";
 
 describe("Token testing", () => {
+  const tokenID = "QcV_onYmp_sIlMnQXYXYGFQNkGk47Xfevq5rTGy-3qY";
   let token: TokenInstance;
   let wallet: JWKInterface;
 
@@ -15,27 +16,36 @@ describe("Token testing", () => {
       protocol: "https"
     });
     wallet = await arweave.wallets.generate();
-    token = await Token(
-      "Sa0iBLPNyJQrwpTTG-tWLQU-1QeUAJA73DdxGGiKoJc",
-      createDataItemSigner(wallet)
-    );
+    token = await Token(tokenID, createDataItemSigner(wallet));
   }, 12000);
 
   test("Load token", () => {
     expect(token).not.toBeUndefined();
     expect(token.info).not.toBeUndefined();
-    expect(typeof token.info?.Name).toBe("string");
+    expect(token.info.Name).toEqual("Points Coin");
   });
 
   test("Quantity is of token", async () => {
-    const tkn = await Token(
-      "Sa0iBLPNyJQrwpTTG-tWLQU-1QeUAJA73DdxGGiKoJc",
-      createDataItemSigner(wallet)
-    );
-    const validQty = new Quantity(324n, 3n);
+    const validQty = new Quantity(324n, 12n);
     const invalidQty = new Quantity(14529n, 5n);
 
-    expect(Quantity.isQuantityOf(validQty, tkn)).toBeTruthy();
-    expect(Quantity.isQuantityOf(invalidQty, tkn)).toBeFalsy();
+    expect(Quantity.isQuantityOf(validQty, token)).toBeTruthy();
+    expect(Quantity.isQuantityOf(invalidQty, token)).toBeFalsy();
+  });
+
+  test("Get balance returns the correct balance", async () => {
+    const existingBal = await token.getBalance(tokenID);
+
+    expect(existingBal.raw.toString()).toEqual("10000000000000000");
+    expect(existingBal.toString()).toEqual("10000");
+    expect(Quantity.isQuantityOf(existingBal, token)).toBeTruthy();
+
+    const noBal = await token.getBalance(
+      "HjvCPN31XCLxkBo9FUeB7vAK0VCfSeY52-CS-6Iho8l"
+    );
+
+    expect(noBal.raw.toString()).toEqual("0");
+    expect(noBal.toString()).toEqual("0");
+    expect(Quantity.isQuantityOf(existingBal, token)).toBeTruthy();
   });
 });

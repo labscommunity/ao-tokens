@@ -12,7 +12,7 @@ export default class Quantity {
    * @param base Quantity in integer/non-denominated format or string
    * @param denomination Denomination that belongs to the token
    */
-  constructor(base?: bigint | string | number, denomination = 0n) {
+  constructor(base?: bigint | string | number | Quantity, denomination = 0n) {
     this.#D = denomination;
     this.#qty = 0n;
 
@@ -31,12 +31,13 @@ export default class Quantity {
         this.#qty = BigInt(base);
         break;
       case "object":
-        if (Quantity.isQuantity(base)) {
-          this.#qty = (base as Quantity).#qty;
-          this.#D = (base as Quantity).#D;
-          break;
+        if (!Quantity.isQuantity(base)) {
+          throw new Error("Could not convert object to quantity");
         }
-        throw new Error("Could not convert object to quantity");
+        
+        this.#qty = base.#qty;
+        this.#D = base.#D;
+        break;
       case "undefined":
         break;
       default:
@@ -95,8 +96,8 @@ export default class Quantity {
    * @returns Valid or not
    */
   static isQuantityOf(val: Quantity, token: TokenInstance) {
-    if (Quantity.isQuantity(val)) return false;
-    return token.info?.Denomination === (val as Quantity).#D;
+    if (!Quantity.isQuantity(val)) return false;
+    return token.info.Denomination === val.#D;
   }
 
   /**

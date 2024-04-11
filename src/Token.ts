@@ -127,11 +127,9 @@ export class TokenInstance {
     const bals: Balances = {};
       
     // find result message
-    for (const msg of res.Messages as Message[]) {
-      const target = getTagValue("Balance", msg.Tags);
-      
+    for (const msg of res.Messages as Message[]) {      
       // return balance if found
-      if (target !== Owner|| !msg.Data) continue;
+      if (msg.Target !== Owner|| !msg.Data) continue;
       
       try {
         const raw = JSON.parse(msg.Data);

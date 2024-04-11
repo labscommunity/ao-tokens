@@ -48,4 +48,10 @@ describe("Token testing", () => {
     expect(noBal.toString()).toEqual("0");
     expect(Quantity.isQuantityOf(existingBal, token)).toBeTruthy();
   });
+
+  test("Get balances returns token balances", async () => {
+    const balances = await token.getBalances();
+
+    expect(balances[tokenID]?.raw.toString()).toEqual("10000000000000000");
+  });
 });

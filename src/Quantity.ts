@@ -579,7 +579,7 @@ export default class Quantity {
     this.#qty = res.#qty;
   }
 
-  static __floor(x: Quantity) {
+  /*static __floor(x: Quantity) {
     
   }
 
@@ -609,5 +609,5 @@ export default class Quantity {
 
   _abs() {
 
-  }
+  }*/
 }

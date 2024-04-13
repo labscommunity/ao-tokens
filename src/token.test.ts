@@ -33,6 +33,19 @@ describe("Token testing", () => {
     expect(Quantity.isQuantityOf(invalidQty, token)).toBeFalsy();
   });
 
+  test("Quantity instance for token", () => {
+    const inst1 = token.Quantity.fromString("1000.245");
+
+    expect(Quantity.isQuantityOf(inst1, token)).toBeTruthy();
+    expect(inst1.toString()).toEqual("1000.245");
+
+    const inst2 = token.Quantity.fromNumber(2);
+
+    expect(Quantity.isQuantityOf(inst2, token)).toBeTruthy();
+    expect(inst2.toString()).toEqual("2");
+    expect(inst1.toString()).toEqual("1000.245");
+  });
+
   test("Get balance returns the correct balance", async () => {
     const existingBal = await token.getBalance(tokenID);
 

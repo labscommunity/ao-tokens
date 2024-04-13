@@ -53,6 +53,15 @@ const denomination = aoCredToken.info.Denomination;
 const logo = aoCredToken.info.Logo;
 ```
 
+#### Token quantity
+
+You can easily manage quantities as special, `bigint` based floating point numbers that keep precision, using the `token.Quantity` field. This field provides a [`Quantity`](#quantities) instance every time it's called, with a pre-configured denomination matching the token's denomination. Read more about quantities [here](#quantities).
+
+```ts
+// initialise a quantity from a token
+const amountToSend = aoCredToken.Quantity.fromString("752.34");
+```
+
 #### Wallet balance
 
 You can query the token balance for an address. This will return a `Quantity` instance.
@@ -86,7 +95,7 @@ The transfer functions allows you to send a message to the token process that in
 ```ts
 // this will transfer 1000 CRED to the provided address
 const id = await aoCredToken.transfer(
-  new Quantity(0n, aoCredToken.info.Denomination).fromString("1000"),
+  aoCredToken.Quantity.fromString("1000"),
   "XjvCPN31XCLPFBo9FUeB7vAK0VC6TwY52MCS-6Iho8h"
 );
 

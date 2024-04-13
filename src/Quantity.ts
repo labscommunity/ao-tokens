@@ -103,7 +103,7 @@ export default class Quantity {
   fromString(value: string) {
     if (!value) {
       this.#qty = 0n;
-      return;
+      return this;
     }
 
     // replace formatters
@@ -112,7 +112,7 @@ export default class Quantity {
     // empty value
     if (value === "") {
       this.#qty = 0n;
-      return;
+      return this;
     }
 
     // multiplier according to the denomination
@@ -138,6 +138,8 @@ export default class Quantity {
 
     // set result
     this.#qty = result;
+
+    return this;
   }
 
   /**
@@ -238,6 +240,7 @@ export default class Quantity {
    */
   _one() {
     this.#qty = 10n ** this.#D;
+    return this;
   }
 
   /**
@@ -260,6 +263,8 @@ export default class Quantity {
 
     this.#D = newDenomination;
     this.#qty = newInst.#qty;
+
+    return this;
   }
 
   /**

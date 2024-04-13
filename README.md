@@ -67,3 +67,28 @@ const balance = await aoCredToken.getBalance(
 console.log("Your balance is:", balance.existingBal.toLocaleString());
 ```
 
+#### All balances
+
+Querying all balances will return the balances object stored in the token's memory. Each holder's address is associated with a `Quantity` instance.
+
+```ts
+const balances = await aoCredToken.getBalances();
+
+for (const addr in balances) {
+  console.log(`${addr} owns ${balances[addr].toLocaleString()} CRED`);
+}
+```
+
+#### Transfer
+
+The transfer functions allows you to send a message to the token process that initiates the transfer of the provided quantity to a recipient.
+
+```ts
+// this will transfer 1000 CRED to the provided address
+const id = await aoCredToken.transfer(
+  new Quantity(0n, aoCredToken.info.Denomination).fromString("1000"),
+  "XjvCPN31XCLPFBo9FUeB7vAK0VC6TwY52MCS-6Iho8h"
+);
+
+console.log("The transfer ID is", id);
+```

@@ -519,6 +519,33 @@ export default class Quantity {
   }
 
   /**
+   * Get the remainder left when x is divided by y
+   * @param x Quantity to divide
+   * @param y Quantity to divide with
+   * @returns The remaineder left after the operation
+   */
+  static __mod(x: Quantity, y: Quantity) {
+    [x, y] = Quantity.sameDenomination(x, y);
+
+    return new Quantity(
+      x.#qty * 10n ** x.#D % y.#qty,
+      x.#D
+    );
+  }
+
+  /**
+   * Get the remainder left when divided by y (in-place)
+   * @param y Quantity to divide with
+   */
+  _mod(y: Quantity) {
+    const res = Quantity.__convert(
+      Quantity.__mod(this, y),
+      this.#D
+    );
+    this.#qty = res.#qty;
+  }
+
+  /**
    * Other Math functions
    */
 

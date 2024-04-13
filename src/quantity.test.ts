@@ -293,6 +293,22 @@ describe("Quantity testing", () => {
     expect(inst1.toString()).toEqual("6.25");
   });
 
+  test("Static remainder", () => {
+    const inst1 = new Quantity(400n, 2n);
+    const inst2 = new Quantity(3000n, 3n);
+
+    const res = Quantity.__mod(inst1, inst2);
+
+    expect(res.toString()).toEqual("1");
+  });
+
+  test("In-place remainder", () => {
+    const inst1 = new Quantity(600000n, 5n);
+    inst1._mod(new Quantity(400n, 2n));
+
+    expect(inst1.toString()).toEqual("2");
+  });
+
   test("Quantity min()", () => {
     const min = new Quantity(1n, 10n);
     const list = [new Quantity(456n, 2n), min, new Quantity(1n, 5n)];

@@ -164,7 +164,6 @@ Quantity.isQuantity(new Quantity(15n, 4n));
 
 Get if a provided value is a valid `Quantity` of a `Token` instance. This will compare the denomination used in the provided `Quantity` instance:
 
-
 ```ts
 // CRED has a denomination of 3
 
@@ -241,7 +240,7 @@ console.log("qty2 is", qty2.toString());
 
 #### Math and utilities
 
-These functions have both static and non-static implementations. Static implementations will always start with two "`_`" and create new `Quantity` instances. Non-static implementations start with one "`_`" and modify themselves (the instances they are associated with).
+These functions have both static and non-static implementations. Static implementations will always start with two "`_`" and create new `Quantity` instances. Non-static implementations start with one "`_`" and modify themselves (the instances they are associated with). Calling static functions with tokens of different denominations will cause the result to have the higher denomination by default. Non-static functions (that are modified in-place) keep their denominations, but might lose precision in doing so.
 
 ##### Math operators
 

@@ -35,8 +35,9 @@ export default class Quantity {
           throw new Error("Could not convert object to quantity");
         }
         
+        base = base.clone();
+        base._convert(this.#D);
         this.#qty = base.#qty;
-        this.#D = base.#D;
         break;
       case "undefined":
         break;

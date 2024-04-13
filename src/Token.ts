@@ -82,6 +82,17 @@ export class TokenInstance {
   }
 
   /**
+   * Get a quantity instance for this token. The instance
+   * will have the token's denomination defined by default.
+   */
+  get Quantity() {
+    return new Quantity(
+      0n,
+      this.info.Denomination
+    );
+  }
+
+  /**
    * Get balance for an address
    * @param address Wallet address
    * @returns Balance in Quantity format

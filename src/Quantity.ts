@@ -494,8 +494,13 @@ export default class Quantity {
 
     // integer power
     if (typeof y === "bigint") {
+      let newRaw = x.#qty ** (y > 0 ? y : -y);
+
+      // TODO: precision
+      if (y < 0) newRaw = 1n / newRaw;
+
       return new Quantity(
-        x.#qty ** y,
+        newRaw,
         x.#D ** y
       )._convert(x.#D);
     }

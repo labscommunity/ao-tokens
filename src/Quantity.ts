@@ -528,7 +528,7 @@ export default class Quantity {
     [x, y] = Quantity.sameDenomination(x, y);
 
     return new Quantity(
-      x.#qty * 10n ** x.#D % y.#qty,
+      x.#qty % y.#qty,
       x.#D
     );
   }

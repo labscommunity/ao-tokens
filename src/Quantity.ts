@@ -494,15 +494,19 @@ export default class Quantity {
 
     // integer power
     if (typeof y === "bigint") {
-      let newRaw = x.#qty ** (y > 0 ? y : -y);
-
-      // TODO: precision
-      if (y < 0) newRaw = 1n / newRaw;
-
-      return new Quantity(
-        newRaw,
+      const positivePower = new Quantity(
+        x.#qty ** (y > 0 ? y : -y),
         x.#D ** y
       )._convert(x.#D);
+
+      // negative exponent
+      if (y > 0) return positivePower;
+
+      // calculate negative exponent
+      const result = Quantity.__one(x.#D);
+      result._div(positivePower);
+
+      return result;
     }
 
     // ensure same denomination

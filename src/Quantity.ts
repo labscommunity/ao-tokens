@@ -22,8 +22,14 @@ export default class Quantity {
         this.#qty = base;
         break;
       case "string":
-        this.fromString(base);
-        break;
+        try {
+          this.#qty = BigInt(base);
+          break;
+        } catch {
+          throw new Error(
+            "Could not parse Quantity from string. Make sure to use Quantity.fromString() to load denominated values"
+          );
+        }
       case "number":
         if (!Number.isInteger(base)) {
           throw new Error("Cannot create Quantity from a non-integer number");
